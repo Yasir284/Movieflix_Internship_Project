@@ -1,0 +1,12 @@
+const MovieCategories = {
+  ACTION: "ACTION",
+  COMEDY: "COMEDY",
+  ROMANCE: "ROMANCE",
+  SCIENCE_FICTION: "SCIENCE_FICTION",
+  HORROR: "HORROR",
+  CRIME_THRILLER: "CRIME_THRILLER",
+  ADVENTURE: "ADVENTURE",
+  REAL_LIFE: "REAL_LIFE",
+};
+
+export default MovieCategories;
