@@ -1,6 +1,16 @@
 import asyncHandler from "../services/asyncHandler.js";
 import CustomeError from "../utils/customeError.js";
 import Movie from "../models/movie.schema.js";
+import cloudinary from "cloudinary";
+import config from "../config/config.js";
+
+const cloudinaryV2 = cloudinary.v2;
+
+cloudinaryV2.config({
+  cloud_name: config.CLOUDINARY_CLOUD_NAME,
+  api_key: config.CLOUDINARY_API_KEY,
+  api_secret: config.CLOUDINARY_API_SECRET,
+});
 
 /**********************************************************************
  @GET_MOVIES
@@ -18,36 +28,45 @@ export const getMovies = asyncHandler(async (req, res) => {});
  @request_type POST
  @route http://localhost:4000/api/movie/add
  @description Adding movie in database
- @parameters  category, name, rating, imageUrl, trailerUrl, streamingPlatform, description
+ @parameters  category, name, rating, trailerUrl, streamingPlatform, description
  @return Movie object
  **********************************************************************/
 
 export const addMovie = asyncHandler(async (req, res) => {
-  const {
-    category,
-    name,
-    rating,
-    imageUrl,
-    trailerUrl,
-    streamingPlatform,
-    description,
-  } = req.body;
+  const { category, name, rating, trailerUrl, streamingPlatform, description } =
+    req.body;
+
+  const file = req.files.movieImage;
+  console.log(file);
+  let result;
+  let image;
 
   if (!(category && name && rating && streamingPlatform && description)) {
     throw new CustomeError("Enter required fields", 400);
   }
 
-  const isMovieAdded = await Movie.find({ name });
+  const isMovieAdded = await Movie.findOne({ name });
 
   if (isMovieAdded) {
     throw new CustomeError("This movie already added", 400);
+  }
+
+  if (file) {
+    result = await cloudinaryV2.uploader.upload(file.tempFilePath, {
+      folder: config.CLOUDINARY_FOLDER_NAME,
+    });
+
+    image = {
+      public_id: result.public_id,
+      secure_url: result.secure_url,
+    };
   }
 
   const payload = {
     category,
     name,
     rating,
-    imageUrl,
+    image,
     trailerUrl,
     streamingPlatform,
     description,
@@ -66,21 +85,102 @@ export const addMovie = asyncHandler(async (req, res) => {
  @UPDATE_MOVIE
  @request_type POST
  @route http://localhost:4000/api/movie/update/:movieId
- @description Adding movie in database
- @parameters category, name, rating, imageUrl, trailerUrl, streamingPlatform, description
+ @description Updating movie in database
+ @parameters any of category, name, rating, image, trailerUrl, streamingPlatform, description
  @return Movie object
  **********************************************************************/
 
 export const updateMovie = asyncHandler(async (req, res) => {
-  const {
-    category,
-    name,
-    rating,
-    imageUrl,
-    trailerUrl,
-    streamingPlatform,
-    description,
-  } = req.body;
+  const payload = req.body;
+  const { movieId } = req.params;
+  console.log(req.files);
+  const file = req.files ? req.files?.movieImage : null;
+  let result;
 
-  const { id: movieId } = req.params;
+  if (file) {
+    result = await cloudinaryV2.uploader.upload(file.tempFilePath, {
+      public_id: payload.image?.public_id || payload.public_id,
+    });
+  }
+
+  const movie = await Movie.findByIdAndUpdate(movieId, payload, { new: true });
+
+  console.log(movie);
+
+  res.status(200).json({ success: true, message: "Movie updated", movie });
+});
+
+/**********************************************************************
+ @DELETE_MOVIE
+ @request_type DELETE
+ @route http://localhost:4000/api/movie/delete/:movieId
+ @description Delete movie from database
+ @parameters
+ @return Success message
+ **********************************************************************/
+
+export const deleteMovie = asyncHandler(async (req, res) => {
+  const { movieId } = req.params;
+
+  const { public_id } = req.body;
+
+  if (!(movieId && public_id))
+    throw new CustomeError("Something went wrong", 400);
+
+  const result = await cloudinaryV2.uploader.destroy(public_id);
+
+  const deleteMovie = await Movie.findByIdAndDelete(movieId);
+
+  res
+    .status(200)
+    .json({ success: true, message: "Movie deleted successfully" });
+});
+
+/**********************************************************************
+ @ADD_WISHLIST
+ @request_type PUT
+ @route http://localhost:4000/api/movie/update/add_wishlist/:movieId
+ @description Adding userId in movie wishlist array
+ @parameters movieId and userId
+ @return Success message
+ **********************************************************************/
+
+export const addWishlist = asyncHandler(async (req, res) => {
+  const { movieId } = req.params;
+  const { userId } = req.body;
+
+  const updateWishlist = await Movie.updateOne(
+    { _id: movieId },
+    {
+      $push: { wishlist: { userId } },
+    },
+    {
+      new: "true",
+    }
+  );
+  console.log(updateWishlist);
+
+  res.status(200).json({ success: true, message: "Whishlist updated" });
+});
+
+/**********************************************************************
+ @REMOVE_WISHLIST
+ @request_type PUT
+ @route http://localhost:4000/api/movie/update/remove_wishlist/:movieId
+ @description Removing userId from movie wishlist array
+ @parameters movieId and userId
+ @return Success message
+ **********************************************************************/
+
+export const removeWishlist = asyncHandler(async (req, res) => {
+  const { movieId } = req.params;
+  const { userId } = req.body;
+
+  const movie = await Movie.findById({ _id: movieId });
+
+  const updateWishlist = movie.wishlist.filter((e) => e.userId !== userId);
+  console.log(updateWishlist);
+
+  await Movie.findByIdAndUpdate(movieId, { wishlist: updateWishlist });
+  res.status(200).json({ success: true, message: "Whishlist updated" });
 });

@@ -18,7 +18,7 @@ const movieSchema = mongoose.Schema(
     },
     description: String,
     rating: Number,
-    image: { imageSchema },
+    image: imageSchema,
     trailerUrl: String,
     streamingPlatform: String,
     wishlist: [wishlist],
