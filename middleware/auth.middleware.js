@@ -1,17 +1,15 @@
 import asyncHandler from "../services/asyncHandler.js";
 import User from "../models/user.schema.js";
 import JWT from "jsonwebtoken";
+import CustomeError from "../utils/customeError.js";
 import config from "../config/config.js";
 
 const isLoggedIn = asyncHandler(async (req, res, next) => {
   const bearerToken = req.header("Authorization")
     ? req.header("Authorization").replace("Bearer ", "")
     : null;
-  let token;
 
-  if (req.cookie.token || bearerToken) {
-    token = res.cookie.token || bearerToken;
-  }
+  const token = req.cookies.token || bearerToken;
 
   if (!token) {
     throw new CustomeError("Not authorized to access the route");

@@ -19,12 +19,15 @@ const cookieOptions = {
 export const signUp = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
-  if (!(name && email && password))
+  if (!(name && email && password)) {
     throw new CustomeError("All fields are mandatory", 400);
+  }
 
-  const isEmailExists = await User.find({ email });
+  const isEmailExists = await User.findOne({ email });
 
-  if (isEmailExists) throw new CustomeError("User exists with this email", 400);
+  if (isEmailExists) {
+    throw new CustomeError("User exists with this email", 400);
+  }
 
   const user = await User.create({
     name,
@@ -50,15 +53,17 @@ export const signUp = asyncHandler(async (req, res) => {
  **********************************************************************/
 
 export const logIn = asyncHandler(async (req, res) => {
-  const { name, email } = req.body;
+  const { email, password } = req.body;
 
-  if (!(name && email)) throw new CustomeError("All fields are mandatory", 400);
+  if (!(email && password))
+    throw new CustomeError("All fields are mandatory", 400);
 
-  const user = await User.find({ email }).select("+password");
+  const user = await User.findOne({ email }).select("+password");
+  console.log(user);
 
   if (!user) throw new CustomeError("Invalid credentials", 400);
 
-  const isPasswordMatched = await user.comparePassword(password);
+  const isPasswordMatched = user.comparePassword(password);
 
   if (!isPasswordMatched) throw new CustomeError("Invalid credentials", 400);
 

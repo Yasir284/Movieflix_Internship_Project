@@ -44,7 +44,7 @@ function validateEmail(email) {
 
 // Encrypt password
 userSchema.pre("save", async function (next) {
-  if (!userSchema.isModified()) return;
+  if (!this.isModified("password")) return;
 
   this.password = await bcrypt.hash(this.password, 10);
 
@@ -60,7 +60,9 @@ userSchema.methods = {
   getJwtToken: function () {
     const payload = { _id: this._id, role: this.role };
 
-    JWT.sign(payload, config.JWT_SECRET, { expiresIn: config.JWT_EXPIRY });
+    return JWT.sign(payload, config.JWT_SECRET, {
+      expiresIn: config.JWT_EXPIRY,
+    });
   },
 };
 
