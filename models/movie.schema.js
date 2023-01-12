@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import MovieCategories from "../utils/movieCategory";
+import MovieCategories from "../utils/movieCategory.js";
 
 const wishlist = mongoose.Schema({ userId: { type: String, unique: true } });
 

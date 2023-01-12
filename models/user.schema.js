@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import JWT from "jsonwebtoken";
-import config from "../../../E-commerce project/config";
-import AuthRoles from "../../../E-commerce project/utils/authRoles";
+import config from "../config/config.js";
+import AuthRoles from "../utils/authRole.js";
 
 const userSchema = mongoose.Schema(
   {
@@ -14,10 +14,7 @@ const userSchema = mongoose.Schema(
     email: {
       type: String,
       required: [true, "Email is required"],
-      validate: {
-        validator: validateEmail(email),
-        message: "E-mail is invalid",
-      },
+      validate: [validateEmail, "Enter valid email"],
       unique: true,
     },
     password: {

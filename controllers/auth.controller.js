@@ -1,6 +1,6 @@
-import asyncHandler from "../../../E-commerce project/services/asyncHandler";
-import CustomeError from "../../../E-commerce project/utils/customeError";
-import User from "../models/user.schema";
+import asyncHandler from "../services/asyncHandler.js";
+import CustomeError from "../utils/customeError.js";
+import User from "../models/user.schema.js";
 
 const cookieOptions = {
   expires: new Date(Date.now() + 24 * 60 * 60 * 1000),

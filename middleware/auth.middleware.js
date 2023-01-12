@@ -1,7 +1,7 @@
-import asyncHandler from "../../../E-commerce project/services/asyncHandler";
-import User from "../models/user.schema";
+import asyncHandler from "../services/asyncHandler.js";
+import User from "../models/user.schema.js";
 import JWT from "jsonwebtoken";
-import config from "../../../E-commerce project/config";
+import config from "../config/config.js";
 
 const isLoggedIn = asyncHandler(async (req, res, next) => {
   const bearerToken = req.header("Authorization")
