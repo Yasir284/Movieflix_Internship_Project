@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import MovieCategories from "../utils/movieCategory.js";
 
 const wishlist = mongoose.Schema({ userId: { type: String, unique: true } });
+const imageSchema = mongoose.Schema({ public_id: String, secure_url: String });
 
 const movieSchema = mongoose.Schema(
   {
@@ -17,7 +18,7 @@ const movieSchema = mongoose.Schema(
     },
     description: String,
     rating: Number,
-    imageUrl: String,
+    image: { imageSchema },
     trailerUrl: String,
     streamingPlatform: String,
     wishlist: [wishlist],
