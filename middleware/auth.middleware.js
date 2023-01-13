@@ -4,7 +4,8 @@ import JWT from "jsonwebtoken";
 import CustomeError from "../utils/customeError.js";
 import config from "../config/config.js";
 
-const isLoggedIn = asyncHandler(async (req, res, next) => {
+// Middleware to check if user is loggedin
+export const isLoggedIn = asyncHandler(async (req, _res, next) => {
   const bearerToken = req.header("Authorization")
     ? req.header("Authorization").replace("Bearer ", "")
     : null;
@@ -26,4 +27,15 @@ const isLoggedIn = asyncHandler(async (req, res, next) => {
   }
 });
 
-export default isLoggedIn;
+// Middleware to give access to routes based on roles
+export const authRole = (role) => {
+  return asyncHandler(async (req, _res, next) => {
+    if (req.user.role !== role) {
+      throw new CustomeError(
+        "You don't have permission to access this route",
+        401
+      );
+    }
+    next();
+  });
+};
