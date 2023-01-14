@@ -27,6 +27,10 @@ export const getMovies = asyncHandler(async (req, res) => {
 
   if (categories.length === 0 || !categories) {
     const getAllMovies = await Movie.find();
+
+    if (!getAllMovies) throw new CustomeError("Movies not found", 400);
+
+    return res.status(200).json({ success: true, movies: getAllMovies });
   }
 
   const getMovies = await Movie.find({ category: { $in: categories } });
