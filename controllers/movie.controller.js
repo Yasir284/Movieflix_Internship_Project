@@ -22,8 +22,12 @@ cloudinaryV2.config({
  **********************************************************************/
 
 export const getMovies = asyncHandler(async (req, res) => {
-  const categories = req.body.categories;
+  const categories = req.body?.categories || undefined;
   console.log(categories);
+
+  if (categories.length === 0 || !categories) {
+    const getAllMovies = await Movie.find();
+  }
 
   const getMovies = await Movie.find({ category: { $in: categories } });
 
