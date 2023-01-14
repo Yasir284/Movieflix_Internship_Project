@@ -22,9 +22,10 @@ cloudinaryV2.config({
  **********************************************************************/
 
 export const getMovies = asyncHandler(async (req, res) => {
-  const payload = req.body;
+  const categories = req.body.categories;
+  console.log(categories);
 
-  const getMovies = await Movie.find({ category: { $in: payload } });
+  const getMovies = await Movie.find({ category: { $in: categories } });
 
   if (!getMovies) throw new CustomeError("Movies not found", 400);
 
@@ -191,4 +192,29 @@ export const removeWishlist = asyncHandler(async (req, res) => {
 
   await Movie.findByIdAndUpdate(movieId, { wishlist: updateWishlist });
   res.status(200).json({ success: true, message: "Whishlist updated" });
+});
+
+/**********************************************************************
+ @SEARCH_MOVIE
+ @request_type GET
+ @route http://localhost:4000/api/movie/search
+ @description Searching movie based on movie name
+ @parameters search
+ @return Success message
+ **********************************************************************/
+
+export const searchMovie = asyncHandler(async (req, res) => {
+  const search = req.params.key;
+
+  const searchMovie = await Movie.find({
+    $or: [
+      { name: { $regex: search, $options: "i" } },
+      { category: { $regex: search, $options: "i" } },
+    ],
+  });
+
+  if (!searchMovie || searchMovie.length === 0)
+    throw new CustomeError("Movie not found", 400);
+
+  res.status(200).json({ success: true, movies: searchMovie });
 });

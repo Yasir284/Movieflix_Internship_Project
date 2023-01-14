@@ -6,6 +6,7 @@ import {
   deleteMovie,
   addWishlist,
   removeWishlist,
+  searchMovie,
 } from "../controllers/movie.controller.js";
 import { isLoggedIn, authRole } from "../middleware/auth.middleware.js";
 import AuthRoles from "../utils/authRole.js";
@@ -29,5 +30,6 @@ router.delete(
 );
 router.put("/update/add_wishlist/:movieId", isLoggedIn, addWishlist);
 router.put("/update/remove_wishlist/:movieId", isLoggedIn, removeWishlist);
+router.get("/search/:key", isLoggedIn, searchMovie);
 
 export default router;
