@@ -14,7 +14,7 @@ import AuthRoles from "../utils/authRole.js";
 const router = Router();
 
 // Routes
-router.get("/get", isLoggedIn, getMovies);
+router.post("/get", isLoggedIn, getMovies);
 router.post("/add", isLoggedIn, authRole(AuthRoles.ADMIN), addMovie);
 router.put(
   "/update/:movieId",

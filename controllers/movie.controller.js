@@ -14,7 +14,7 @@ cloudinaryV2.config({
 
 /**********************************************************************
  @GET_MOVIES
- @request_type GET
+ @request_type POST
  @route http://localhost:4000/api/movie/get
  @description Getting movies based on categories
  @parameters array of categories from req.body 
@@ -25,7 +25,7 @@ export const getMovies = asyncHandler(async (req, res) => {
   const categories = req.body?.categories || undefined;
   console.log(categories);
 
-  if (categories.length === 0 || !categories) {
+  if (!categories || categories.length === 0) {
     const getAllMovies = await Movie.find();
 
     if (!getAllMovies) throw new CustomeError("Movies not found", 400);
