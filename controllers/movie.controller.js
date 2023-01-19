@@ -52,7 +52,7 @@ export const getMovies = asyncHandler(async (req, res) => {
 export const addMovie = asyncHandler(async (req, res) => {
   const { category, name, rating, trailerUrl, streamingPlatform, description } =
     req.body;
-
+  console.log(res.files);
   const file = req.files.movieImage;
   console.log(file);
   let result;
@@ -89,13 +89,18 @@ export const addMovie = asyncHandler(async (req, res) => {
     description,
   };
 
-  const movie = await Movie.create(payload);
-
-  res.status(200).json({
-    success: true,
-    message: "New movie added",
-    movie,
-  });
+  try {
+    const movie = await Movie.create(payload);
+    res.status(200).json({
+      success: true,
+      message: "New movie added",
+      movie,
+    });
+  } catch (err) {
+    console.log(err);
+    await cloudinaryV2.uploader.destroy(image.public_id);
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
 /**********************************************************************
