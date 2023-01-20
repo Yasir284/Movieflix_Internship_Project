@@ -133,7 +133,7 @@ export const updateMovie = asyncHandler(async (req, res) => {
 
 /**********************************************************************
  @DELETE_MOVIE
- @request_type DELETE
+ @request_type PUT
  @route http://localhost:4000/api/movie/delete/:movieId
  @description Delete movie from database
  @parameters
