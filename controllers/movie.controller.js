@@ -104,7 +104,7 @@ export const addMovie = asyncHandler(async (req, res) => {
 
 /**********************************************************************
  @UPDATE_MOVIE
- @request_type POST
+ @request_type PUT
  @route http://localhost:4000/api/movie/update/:movieId
  @description Updating movie in database
  @parameters any of category, name, rating, image, trailerUrl, streamingPlatform, description
@@ -120,7 +120,7 @@ export const updateMovie = asyncHandler(async (req, res) => {
 
   if (file) {
     result = await cloudinaryV2.uploader.upload(file.tempFilePath, {
-      public_id: payload.image?.public_id || payload.public_id,
+      public_id: payload.public_id,
     });
   }
 
@@ -142,9 +142,7 @@ export const updateMovie = asyncHandler(async (req, res) => {
 
 export const deleteMovie = asyncHandler(async (req, res) => {
   const { movieId } = req.params;
-
   const { public_id } = req.body;
-
   if (!(movieId && public_id))
     throw new CustomeError("Something went wrong", 400);
 

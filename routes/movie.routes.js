@@ -22,7 +22,7 @@ router.put(
   authRole(AuthRoles.ADMIN),
   updateMovie
 );
-router.delete(
+router.put(
   "/delete/:movieId",
   isLoggedIn,
   authRole(AuthRoles.ADMIN),
