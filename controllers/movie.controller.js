@@ -206,23 +206,32 @@ export const removeWishlist = asyncHandler(async (req, res) => {
 
 /**********************************************************************
  @SEARCH_MOVIE
- @request_type GET
+ @request_type POST
  @route http://localhost:4000/api/movie/search
- @description Searching movie based on movie name
+ @description Searching movie based on movie name and categories
  @parameters search
- @return Success message
+ @return Movie object
  **********************************************************************/
 
 export const searchMovie = asyncHandler(async (req, res) => {
   const search = req.params.key;
+  const categories = req.body.categories;
+  console.log(categories);
+  let searchMovie;
 
-  const searchMovie = await Movie.find({
-    $or: [
-      { name: { $regex: search, $options: "i" } },
-      { category: { $regex: search, $options: "i" } },
-    ],
-  });
-
+  if (categories.length === 0 && search) {
+    searchMovie = await Movie.find({
+      $or: [{ name: { $regex: search, $options: "i" } }],
+    });
+  } else {
+    searchMovie = await Movie.find({
+      $and: [
+        { name: { $regex: search, $options: "i" } },
+        { category: { $in: categories } },
+      ],
+    });
+  }
+  console.log(searchMovie);
   if (!searchMovie || searchMovie.length === 0)
     throw new CustomeError("Movie not found", 400);
 

@@ -30,6 +30,6 @@ router.put(
 );
 router.put("/update/add_wishlist/:movieId", isLoggedIn, addWishlist);
 router.put("/update/remove_wishlist/:movieId", isLoggedIn, removeWishlist);
-router.get("/search/:key", isLoggedIn, searchMovie);
+router.post("/search/:key", isLoggedIn, searchMovie);
 
 export default router;
