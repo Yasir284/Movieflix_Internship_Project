@@ -123,6 +123,14 @@ export const updateMovie = asyncHandler(async (req, res) => {
       public_id: payload.public_id,
     });
   }
+  console.log(result);
+
+  const image = {
+    public_id: result.public_id,
+    secure_url: result.secure_url,
+  };
+
+  payload.image = image;
 
   const movie = await Movie.findByIdAndUpdate(movieId, payload, { new: true });
 
