@@ -14,7 +14,7 @@ import AuthRoles from "../utils/authRole.js";
 const router = Router();
 
 // Routes
-router.post("/get", isLoggedIn, getMovies);
+router.post("/get", getMovies);
 router.post("/add", isLoggedIn, authRole(AuthRoles.ADMIN), addMovie);
 router.put(
   "/update/:movieId",
@@ -30,6 +30,6 @@ router.put(
 );
 router.put("/update/add_wishlist/:movieId", isLoggedIn, addWishlist);
 router.put("/update/remove_wishlist/:movieId", isLoggedIn, removeWishlist);
-router.post("/search/:key", isLoggedIn, searchMovie);
+router.post("/search/:key", searchMovie);
 
 export default router;

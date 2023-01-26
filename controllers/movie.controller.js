@@ -122,15 +122,15 @@ export const updateMovie = asyncHandler(async (req, res) => {
     result = await cloudinaryV2.uploader.upload(file.tempFilePath, {
       public_id: payload.public_id,
     });
+
+    const image = {
+      public_id: result.public_id,
+      secure_url: result.secure_url,
+    };
+
+    payload.image = image;
   }
   console.log(result);
-
-  const image = {
-    public_id: result.public_id,
-    secure_url: result.secure_url,
-  };
-
-  payload.image = image;
 
   const movie = await Movie.findByIdAndUpdate(movieId, payload, { new: true });
 
@@ -169,14 +169,14 @@ export const deleteMovie = asyncHandler(async (req, res) => {
  @route http://localhost:4000/api/movie/update/add_wishlist/:movieId
  @description Adding userId in movie wishlist array
  @parameters movieId and userId
- @return Success message
+ @return Success message and movie object
  **********************************************************************/
 
 export const addWishlist = asyncHandler(async (req, res) => {
   const { movieId } = req.params;
   const { userId } = req.body;
 
-  const updateWishlist = await Movie.updateOne(
+  const updateWishlist = await Movie.findByIdAndUpdate(
     { _id: movieId },
     {
       $push: { wishlist: { userId } },
@@ -187,7 +187,11 @@ export const addWishlist = asyncHandler(async (req, res) => {
   );
   console.log(updateWishlist);
 
-  res.status(200).json({ success: true, message: "Whishlist updated" });
+  res.status(200).json({
+    success: true,
+    message: "Whishlist updated",
+    movie: updateWishlist,
+  });
 });
 
 /**********************************************************************
@@ -196,7 +200,7 @@ export const addWishlist = asyncHandler(async (req, res) => {
  @route http://localhost:4000/api/movie/update/remove_wishlist/:movieId
  @description Removing userId from movie wishlist array
  @parameters movieId and userId
- @return Success message
+ @return Success message and movie object
  **********************************************************************/
 
 export const removeWishlist = asyncHandler(async (req, res) => {
@@ -208,8 +212,16 @@ export const removeWishlist = asyncHandler(async (req, res) => {
   const updateWishlist = movie.wishlist.filter((e) => e.userId !== userId);
   console.log(updateWishlist);
 
-  await Movie.findByIdAndUpdate(movieId, { wishlist: updateWishlist });
-  res.status(200).json({ success: true, message: "Whishlist updated" });
+  const updateMovie = await Movie.findByIdAndUpdate(
+    movieId,
+    { wishlist: updateWishlist },
+    { new: true }
+  );
+  console.log(updateMovie);
+
+  res
+    .status(200)
+    .json({ success: true, message: "Whishlist updated", movie: updateMovie });
 });
 
 /**********************************************************************
