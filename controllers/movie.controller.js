@@ -24,16 +24,13 @@ cloudinaryV2.config({
 export const getMovies = asyncHandler(async (req, res) => {
   const categories = req.body?.categories || undefined;
   console.log(categories);
+  let getMovies;
 
   if (!categories || categories.length === 0) {
-    const getAllMovies = await Movie.find();
-
-    if (!getAllMovies) throw new CustomeError("Movies not found", 400);
-
-    return res.status(200).json({ success: true, movies: getAllMovies });
+    getMovies = await Movie.find();
+  } else {
+    getMovies = await Movie.find({ category: { $in: categories } });
   }
-
-  const getMovies = await Movie.find({ category: { $in: categories } });
 
   if (!getMovies) throw new CustomeError("Movies not found", 400);
 
