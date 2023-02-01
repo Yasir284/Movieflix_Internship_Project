@@ -49,7 +49,7 @@ export const getMovies = asyncHandler(async (req, res) => {
 export const addMovie = asyncHandler(async (req, res) => {
   const { category, name, rating, trailerUrl, streamingPlatform, description } =
     req.body;
-  const file = req.files.movieImage;
+  const file = req.files?.movieImage;
   console.log(file);
   let result;
   let image;
