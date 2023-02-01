@@ -148,10 +148,11 @@ export const updateMovie = asyncHandler(async (req, res) => {
 export const deleteMovie = asyncHandler(async (req, res) => {
   const { movieId } = req.params;
   const { public_id } = req.body;
-  if (!(movieId && public_id))
-    throw new CustomeError("Something went wrong", 400);
+  if (!movieId) throw new CustomeError("Something went wrong", 400);
 
-  const result = await cloudinaryV2.uploader.destroy(public_id);
+  if (public_id) {
+    await cloudinaryV2.uploader.destroy(public_id);
+  }
 
   const deleteMovie = await Movie.findByIdAndDelete(movieId);
 
