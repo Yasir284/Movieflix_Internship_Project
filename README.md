@@ -3,7 +3,7 @@
 
 # Movieflix app - BACKEND
 
-- This is a internship project. In this project I have made a **Movieflix App** with MERN, which reccomends you movies based on selected categories which contains movie streaming platform link, trailer, description, IMDb rating and you can add movies to your watch list.
+- This is an internship project. In this project, I have made a **Movieflix App** with MERN, which recommends movies based on selected categories. It contains the movie's streaming platform link, trailer, description, and IMDb rating and you can add movies to your watch list.
 
 - I have hosted this website on Netlify, please find the link below:
 
